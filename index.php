@@ -1,7 +1,5 @@
 <!-- connect to database -->
 <?php include("connect.php"); ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,16 +45,6 @@
     <?php
       $query = "SELECT * FROM products";
       $result = mysqli_query($conn, $query);
-
-      $query = "SELECT * FROM users";
-      $result = mysqli_query($conn, $query);
-      while ($row = mysqli_fetch_array($result)) {
-        $b = $row['user_cart'];
-      }
-      $b = unserialize($b);
-      
-    
-      print_r($b);
       
     ?>
     <?php while ($row = mysqli_fetch_array($result)) { ?>
