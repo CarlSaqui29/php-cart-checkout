@@ -57,6 +57,7 @@
     <tbody>
       <?php for ($i = 0; $i < count($arr); $i++) {
         $total += $arr[$i][2]*$arr[$i][3];
+        
       ?>
       
         <tr>
@@ -70,14 +71,13 @@
               $updated_product_fetch = mysqli_fetch_array($query_getUpdated_qty_result);
               $updated_product_qty = $updated_product_fetch['product_qty'];
             ?>
-            
             <input id="qty<?php echo $product_id; ?>"type="hidden" value="<?php echo $updated_product_qty; ?>">
-            <button onclick="decrementItem(<?php echo $product_id; ?>)">-</button>
+            <button onclick="decrementItem(<?php echo $product_id; ?>,<?php echo $arr[$i][3];?>)">-</button>
             <input id="<?php echo $product_id; ?>" value="<?php echo $arr[$i][2]; ?>" type="number" disabled>
-            <button onclick="incrementItem(<?php echo $product_id; ?>)">+</button>
+            <button onclick="incrementItem(<?php echo $product_id; ?>,<?php echo $arr[$i][3];?>)">+</button>
           </td>
           <td><?php echo $arr[$i][3]; ?></td>
-          <td><?php echo $arr[$i][2]*$arr[$i][3]; ?></td>
+          <td id="total<?php echo $product_id; ?>"><?php echo $arr[$i][2]*$arr[$i][3]; ?></td>
           <form action="functions.php" method="POST">
             <input type="hidden" name="prod_id" value=<?php echo $product_id; ?>>
             <td><input type="submit" name="delete_item" value="Delete" /></td>
@@ -87,26 +87,39 @@
       <?php } ?>
     </tbody>
   </table>
-  <h3>Total: <?php echo $total ?></h3>
+  <h3 id="cart_total_text">Total: <?php echo $total ?></h3>
+  <input type="hidden" id="cart_total" value=<?php echo $total ?>/>
   </div>
   <script>
-    decrementItem = (id) => {
+    decrementItem = (id,price) => {
       let value = parseInt(document.getElementById(id).value);
       if (value === 1) {
         alert('Must Have atleast 1 item.')
       } else {
         document.getElementById(id).value = value - 1;
+        computeCartTotalCost('decrement',price);
       }
     }
 
-    incrementItem = (id) => {
+    incrementItem = (id,price) => {
       let product_stock = parseInt(document.getElementById('qty' + id).value);
       let value = parseInt(document.getElementById(id).value);
       if (value === product_stock) {
         alert('Out of Stock')
       } else {
-        document.getElementById(id).value = value + 1;
+        let totalValue = value + 1;
+        document.getElementById(id).value = totalValue;
+        document.getElementById('total' + id).innerHTML = totalValue * price;
+        computeCartTotalCost('increment',price);
       }
+    }
+
+    computeCartTotalCost = (func,price) => {
+      console.log('here')
+      let cart_total = parseInt(document.getElementById('cart_total').value);
+      cart_total = func === "increment" ? cart_total += price : cart_total -= price;
+      document.getElementById('cart_total_text').innerHTML = 'Total: ' +  cart_total;
+      document.getElementById('cart_total').value = cart_total;
     }
 
   </script>
