@@ -1,6 +1,7 @@
 <?php
 include("connect.php");
 
+
 if (isset($_POST['add_to_cart'])) {
   // init is_on_cart to false
   $is_on_cart = false;
@@ -18,7 +19,7 @@ if (isset($_POST['add_to_cart'])) {
 
   // if the user's cart is empty then create new cart/array then add the item that user has clicked
   // else just add the item that user select to existing cart/array
-  // array structure: product_id, product_name, initial_quantity, product_price, product_stock_quantity
+  // array structure: [product_id, product_name, initial_quantity, product_price, product_stock_quantity]
   if ($user_cart == '' || $user_cart == null) {
     $arr = array(
       array($product_id, $product_name, 1, $product_price, $product_qty)
@@ -57,6 +58,30 @@ if (isset($_POST['add_to_cart'])) {
   }
   
   
+}
+
+if (isset($_POST['delete_item'])) {
+  $prod_id = $_POST['prod_id'];
+
+  // get the cart of the user in db then remove the item
+  $q1 = "SELECT * FROM users WHERE id=13";
+  $res1 = mysqli_query($conn, $q1);
+  $r1 = mysqli_fetch_array($res1);
+  $b = $r1['user_cart'];
+  $arr = unserialize($b);
+  // remove the item in array/cart using the index
+  $updated_cart = array();
+  for ($i = 0; $i < count($arr); $i++) {
+    if ((string)$arr[$i][0] != (string)$prod_id) {
+      array_push($updated_cart,$arr[$i]);
+    }
+  }
+
+  // serialize array
+  $serialize_arr = serialize($updated_cart);
+
+  $conn->query("UPDATE users SET user_cart='$serialize_arr' WHERE id=13") or die($conn->error);
+  header("Location: cart.php");
 }
 
 ?>
