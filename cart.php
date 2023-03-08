@@ -58,7 +58,7 @@
       <?php for ($i = 0; $i < count($arr); $i++) {
         $total += $arr[$i][2]*$arr[$i][3];
       ?>
-      <form action="functions.php" method="POST">
+      
         <tr>
           <th scope="row"><?php echo $arr[$i][1]; ?></th>
           <td>
@@ -70,7 +70,7 @@
               $updated_product_fetch = mysqli_fetch_array($query_getUpdated_qty_result);
               $updated_product_qty = $updated_product_fetch['product_qty'];
             ?>
-            <input type="hidden" name="prod_id" value=<?php echo $product_id; ?>>
+            
             <input id="qty<?php echo $product_id; ?>"type="hidden" value="<?php echo $updated_product_qty; ?>">
             <button onclick="decrementItem(<?php echo $product_id; ?>)">-</button>
             <input id="<?php echo $product_id; ?>" value="<?php echo $arr[$i][2]; ?>" type="number" disabled>
@@ -78,9 +78,12 @@
           </td>
           <td><?php echo $arr[$i][3]; ?></td>
           <td><?php echo $arr[$i][2]*$arr[$i][3]; ?></td>
-          <td><input type="submit" name="delete_item" value="Delete" /></td>
+          <form action="functions.php" method="POST">
+            <input type="hidden" name="prod_id" value=<?php echo $product_id; ?>>
+            <td><input type="submit" name="delete_item" value="Delete" /></td>
+          </form>
         </tr>
-      </form>
+      
       <?php } ?>
     </tbody>
   </table>
